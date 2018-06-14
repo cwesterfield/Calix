@@ -2,7 +2,7 @@
 !
 telnet
 hostname {{ item.hostname }}
-enable password 7 3ebbbc7a9b35890ba6ae9284157eabbe6e440c4ff78b4c9321f0e3837ee138e6383b2bf4
+enable password {{ password }}
 !
 ! Configure Clock
 !
@@ -578,7 +578,7 @@ exit
 ! Configure BVI Interface(s)
 !
 interface bvi 1
- ip address {{ ip }} 255.255.255.0
+ ip address {{ item.ip }} 255.255.255.0
  eps access untagged vlan 2
  no shutdown
 exit
