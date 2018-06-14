@@ -1,0 +1,49 @@
+---
+blade:
+  - hostname: RUSL-C18-S1
+    ip: 10.10.46.41
+    profile: 6318-S1
+
+  - hostname: RUSL-C18-S12
+    ip: 10.10.46.52
+    profile: 6318-S12
+
+  - hostname: RUSL-C18-S2
+    ip: 10.10.46.42
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S3
+    ip: 10.10.46.43
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S4
+    ip: 10.10.46.44
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S5
+    ip: 10.10.46.45
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S6
+    ip: 10.10.46.46
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S7
+    ip: 10.10.46.47
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S8
+    ip: 10.10.46.48
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S9
+    ip: 10.10.46.49
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S10
+    ip: 10.10.46.50
+    profile: 6318-S2S11
+
+  - hostname: RUSL-C18-S11
+    ip: 10.10.46.51
+    profile: 6318-S2S11

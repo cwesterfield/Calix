@@ -1,0 +1,7 @@
+---
+- name: Apply chassis role
+  gather_facts: no
+  hosts: localhost
+
+  roles:
+- chassis

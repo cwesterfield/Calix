@@ -1,0 +1,609 @@
+! Configure System
+!
+telnet
+hostname {{ item.hostname }}
+enable password 7 3ebbbc7a9b35890ba6ae9284157eabbe6e440c4ff78b4c9321f0e3837ee138e6383b2bf4
+!
+! Configure Clock
+!
+clock timezone CST
+clock summer-time
+!
+! Configure Access List
+!
+access-list ip 4 permit 0.0.0.0/0 udp any  68
+access-list ip 4 deny 0.0.0.0/0 udp 67
+access-list ip 4 deny 0.0.0.0/0 udp any  137
+access-list ip 4 deny 0.0.0.0/0 udp any  138
+access-list ip 4 deny 0.0.0.0/0 tcp any  139
+access-list ip 4 deny 0.0.0.0/0 tcp any  445
+access-list ip 4 deny 0.0.0.0/0 udp any  445
+access-list ip 4 permit associations
+access-list ip 6 permit 0.0.0.0/0 udp any  68
+access-list ip 6 deny 0.0.0.0/0 udp 67
+access-list ip 6 deny 0.0.0.0/0 udp any  137
+access-list ip 6 deny 0.0.0.0/0 udp any  138
+access-list ip 6 deny 0.0.0.0/0 tcp any  139
+access-list ip 6 deny 0.0.0.0/0 tcp any  445
+access-list ip 6 deny 0.0.0.0/0 udp any  445
+access-list ip 6 permit associations
+!
+! Configure EPS
+!
+eps
+ mode vps
+ ring path preference pg1
+ double-fault path preference pg1
+exit
+!
+! Configure Subscriber
+!
+subscriber s-vid 2
+ mode n2one
+exit
+subscriber s-vid 4
+ mode n2one
+ ingress ip access-group 4
+ egress broadcast flooding disable
+ egress multicast flooding disable
+exit
+subscriber s-vid 5
+ mode n2one
+exit
+subscriber s-vid 6
+ mode n2one
+exit
+subscriber s-vid 7
+ mode n2one
+exit
+subscriber s-vid 8
+ mode n2one
+exit
+subscriber s-vid 9
+ mode n2one
+exit
+!
+! Configure Policy Map(s)
+!
+policy-map 12Mb
+ unicast-rate-limit 28.16
+exit
+!
+policy-map 6Mb
+ unicast-rate-limit 6.0
+exit
+!
+policy-map T1
+ unicast-rate-limit 24.0
+exit
+!
+policy-map VIDEO-BRONZE
+ unicast-rate-limit 46.0
+exit
+!
+policy-map VIDEO-GOLD
+ unicast-rate-limit 38.0
+exit
+!
+policy-map VIDEO-PLTNUM
+ unicast-rate-limit 50.0
+exit
+!
+policy-map VIDEO-SILVER
+ unicast-rate-limit 44.0
+exit
+!
+policy-map data-100Mb
+ unicast-rate-limit 140.8
+exit
+!
+policy-map data-10Mb
+ unicast-rate-limit 10.24
+exit
+!
+policy-map data-125Mb
+ unicast-rate-limit 140.8
+exit
+!
+policy-map data-1Gb
+ unicast-rate-limit 1000.0
+exit
+!
+policy-map data-1Mb
+ unicast-rate-limit 1.128
+exit
+!
+policy-map data-200Mb
+ unicast-rate-limit 225.28
+exit
+!
+policy-map data-20Mb
+ unicast-rate-limit 20.48
+exit
+!
+policy-map data-256k
+ unicast-rate-limit 0.256
+exit
+!
+policy-map data-25Mb
+ unicast-rate-limit 28.16
+exit
+!
+policy-map data-384k
+ unicast-rate-limit 0.384
+exit
+!
+policy-map data-3Mb
+ unicast-rate-limit 3.128
+exit
+!
+policy-map data-50Mb
+ unicast-rate-limit 84.48
+exit
+!
+policy-map data-512k
+ unicast-rate-limit 0.512
+exit
+!
+policy-map data-5Mb
+ unicast-rate-limit 5.12
+exit
+!
+policy-map data-75Mb
+ unicast-rate-limit 84.48
+exit
+!
+policy-map data-bronze
+ unicast-rate-limit 4.51
+exit
+!
+policy-map data-gold
+ unicast-rate-limit 28.16
+exit
+!
+policy-map data-platinum
+ unicast-rate-limit 84.48
+exit
+!
+policy-map data-silver
+ unicast-rate-limit 8.0
+exit
+!
+policy-map default
+ unicast-rate-limit 0.256
+exit
+!
+policy-map video-40
+ unicast-rate-limit 50.0
+exit
+!
+! Configure Access Profile(s)
+!
+access-profile IAD
+ s-vid 8
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 1
+exit
+!
+access-profile T1
+ s-vid 2
+ service-policy output T1
+ service-policy input T1
+ dhcp mode none
+ arp mode none
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+exit
+!
+access-profile VIDEO-40
+ s-vid 6
+ service-policy output video-40
+ dhcp circuit-id ${SYSNAME}/${SLOT}/${DEVNAME}
+ dhcp mode l2Relay
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ igmp host 3
+ blacklist rate limit arp 15 5 3 shutdown
+ mac limit 7
+exit
+!
+access-profile VIDEO-BRONZE
+ s-vid 6
+ service-policy output VIDEO-BRONZE
+ dhcp circuit-id ${SYSNAME}/${SLOT}/${DEVNAME}
+ dhcp mode l2Relay
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ igmp host 3
+ blacklist rate limit arp 50 5 3 shutdown
+ mac limit 7
+exit
+!
+access-profile VIDEO-GOLD
+ s-vid 6
+ service-policy output VIDEO-GOLD
+ dhcp circuit-id ${SYSNAME}/${SLOT}/${DEVNAME}
+ dhcp mode l2Relay
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ igmp host 3
+ blacklist rate limit arp 50 5 3 shutdown
+ mac limit 7
+exit
+!
+access-profile VIDEO-PLTNUM
+ s-vid 6
+ service-policy output VIDEO-PLTNUM
+ dhcp circuit-id ${SYSNAME}/${SLOT}/${DEVNAME}
+ dhcp mode l2Relay
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ igmp host 3
+ blacklist rate limit arp 50 5 3 shutdown
+ mac limit 7
+exit
+!
+access-profile VIDEO-SILVER
+ s-vid 6
+ service-policy output VIDEO-SILVER
+ dhcp circuit-id ${SYSNAME}/${SLOT}/${DEVNAME}
+ dhcp mode l2Relay
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ igmp host 3
+ blacklist rate limit arp 50 5 3 shutdown
+ mac limit 7
+exit
+!
+access-profile data-100Mb-10Mb
+ s-vid 4
+ service-policy output data-100Mb
+ service-policy input data-10Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-125Mb-10Mb
+ s-vid 4
+ service-policy output data-125Mb
+ service-policy input data-10Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-1Gb-50Mb
+ s-vid 2
+ dhcp mode none
+ arp mode none
+ arp cache timeout 15
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+exit
+!
+access-profile data-1Gig-100Mb
+ s-vid 4
+ service-policy output data-1Gb
+ service-policy input data-100Mb
+ dhcp circuit-id ${SYSNAME}/${SLOT}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-200Mb-20Mb
+ s-vid 4
+ service-policy output data-200Mb
+ service-policy input data-20Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-25Mb-3Mb
+ s-vid 4
+ service-policy output data-25Mb
+ service-policy input data-3Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-50Mb-5Mb
+ s-vid 4
+ service-policy output data-50Mb
+ service-policy input data-5Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-75Mb-5Mb
+ s-vid 4
+ service-policy output data-75Mb
+ service-policy input data-5Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-bronze
+ s-vid 4
+ service-policy output data-bronze
+ service-policy input data-1Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-gold
+ s-vid 4
+ service-policy output data-gold
+ service-policy input data-3Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-ipcentrex
+ s-vid 4
+ service-policy output data-platinum
+ service-policy input data-512k
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-lightspeed
+ s-vid 4
+ service-policy input data-512k
+ dhcp circuit-id ${SYSNAME}/${SLOT}/${DEVNAME}
+ dhcp mode none
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-platinum
+ s-vid 4
+ service-policy output data-platinum
+ service-policy input data-5Mb
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode none
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile data-silver
+ s-vid 4
+ service-policy output data-silver
+ service-policy input data-512k
+ dhcp circuit-id ${SYSNAME}/${SYSIP}/${DEVNAME}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 2
+exit
+!
+access-profile voice-ont
+ s-vid 7
+ dhcp circuit-id ${SYSIP}/${DEVNAME}:Vlan${VLAN}
+ dhcp mode l2Relay
+ dhcp hot-swap
+ arp mode proxy
+ arp cache timeout 15
+ arp reply gateway
+ no ipv6 ldra
+ no ipv6 ndp
+ no ipv6 trusted-port
+ mac limit 3
+exit
+!
+! Configure Ethernet Link Aggregation
+!
+!
+! Configure XG Interfaces
+!
+interface xg 1
+ ingress unknown-unicast rate limit 0
+ ingress multicast rate limit 0
+ ingress broadcast rate limit 0
+ eps ring pg1
+ mtu 9000
+ igmp vlan 3
+  mode host
+  version v2
+ exit
+ no shutdown
+exit
+!
+interface xg 2
+ ingress unknown-unicast rate limit 0
+ ingress multicast rate limit 0
+ ingress broadcast rate limit 0
+ eps ring all
+ mtu 9000
+ igmp vlan 3
+  mode passthrough
+  version v2
+ exit
+ no shutdown
+exit
+!
+interface xg 3
+ ingress unknown-unicast rate limit 100
+ ingress multicast rate limit 0
+ ingress broadcast rate limit 1000
+ mtu 1600
+ shutdown
+exit
+!
+interface xg 4
+ ingress unknown-unicast rate limit 0
+ ingress multicast rate limit 0
+ ingress broadcast rate limit 0
+ eps ring all
+ mtu 9000
+ igmp vlan 3
+  mode passthrough
+  version v2
+ exit
+ no shutdown
+exit
+!
+! Configure MGMT Interface
+!
+interface mgmt
+ no shutdown
+exit
+!
+!
+! Configure BVI Interface(s)
+!
+interface bvi 1
+ ip address {{ ip }} 255.255.255.0
+ eps access untagged vlan 2
+ no shutdown
+exit
+!
+! Configure IP Route
+!
+ip default-route {{ route }}
+!
+! Configure NTI
+!
+nti
+ shutdown
+exit
+! 
+! Configure NTP Date Server
+! 
+ntp date-server 172.18.0.50
+ntp date-server 172.18.0.51
+!
+! Configure Thresholds
+!
+! Configure SNMP
+!
+snmp-server name {{ item.hostname }}
+snmp-server enable traps all
+snmp-server host all 172.16.0.15 public 162
+snmp-server host all 172.16.0.31 public 162
+snmp-server
