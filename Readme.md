@@ -1,7 +1,4 @@
-Ansible Template for Calix Chassis
+### Ansible Template for Calix Chassis
 
-Current runtime error
-
-fatal: [localhost]: FAILED! => {
-    "msg": "'blade' is undefined"
-}
+Will configure blades 2-11 for middle configuration
+Will configure 1 & 12 for EPS
